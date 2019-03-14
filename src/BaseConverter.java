@@ -9,9 +9,13 @@ public class BaseConverter extends JFrame
 	private JComboBox<String> inputBases, outputBases;
 	private JButton convertButton;
 	
+	private String[] bases = new String[34];
+	
 	public BaseConverter()
 	{
 		super("Number Base Converter");
+		
+		fillBases();
 		
 		GridBagConstraints c = new GridBagConstraints();
 		
@@ -27,8 +31,7 @@ public class BaseConverter extends JFrame
 		JLabel inputLabel = new JLabel("Input number");
 		inputText = new JTextField();
 		
-		inputBases = new JComboBox<>();
-		inputBases.addActionListener(this);
+		inputBases = new JComboBox<>(bases);
 		
 		c.gridx = 0;
 		c.gridy = 0;
@@ -52,8 +55,7 @@ public class BaseConverter extends JFrame
 		outputText = new JTextField();
 		outputText.setEditable(false);
 		
-		outputBases = new JComboBox<>();
-		outputBases.addActionListener(this);
+		outputBases = new JComboBox<>(bases);
 		
 		c.gridx = 0;
 		c.gridy = 0;
@@ -71,6 +73,7 @@ public class BaseConverter extends JFrame
 		
 		// Convert Button
 		convertButton = new JButton("Convert");
+		convertButton.addActionListener(this);
 		// End Convert Button
 		
 		
@@ -79,7 +82,7 @@ public class BaseConverter extends JFrame
 		c.weightx = 1;
 		c.weighty = 0.5;
 		c.fill = GridBagConstraints.HORIZONTAL;
-		c.insets = new Insets(20, 20, 20, 20);
+		c.insets = new Insets(0, 20, 0, 20);
 		mainPanel.add(inputPanel, c);
 		c.gridy++;
 		mainPanel.add(outputPanel, c);
@@ -93,9 +96,30 @@ public class BaseConverter extends JFrame
 		getContentPane().add(mainPanel);
 	}
 	
+	// Fill the bases array with 'Base (2-35)'
+	private void fillBases()
+	{
+		for(int i = 2; i <= 35; i++)
+		{
+			bases[i-2] = "Base " + i;
+		}
+	}
+	
+	// Helper functions to get the bases
+	private int getInputBase() { return inputBases.getSelectedIndex()+2; }
+	private int getOutputBase() { return outputBases.getSelectedIndex()+2; }
+	
+	
 	public void actionPerformed(ActionEvent e)
 	{
-	
+		if(e.getSource() == convertButton)
+		{
+			System.out.println(charMap);
+			if(checkNum())
+			{
+				outputText.setText(convert());
+			}
+		}
 	}
 	
 	public static void main(String[] args)
