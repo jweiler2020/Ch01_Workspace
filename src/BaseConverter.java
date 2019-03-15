@@ -9,7 +9,9 @@ public class BaseConverter extends JFrame
 	private JComboBox<String> inputBases, outputBases;
 	private JButton convertButton;
 	
-	private String[] bases = new String[34];
+	private String[] bases = new String[35];
+	
+	private BaseXNumber in, out;
 	
 	public BaseConverter()
 	{
@@ -99,7 +101,7 @@ public class BaseConverter extends JFrame
 	// Fill the bases array with 'Base (2-35)'
 	private void fillBases()
 	{
-		for(int i = 2; i <= 35; i++)
+		for(int i = 2; i <= 36; i++)
 		{
 			bases[i-2] = "Base " + i;
 		}
@@ -114,11 +116,7 @@ public class BaseConverter extends JFrame
 	{
 		if(e.getSource() == convertButton)
 		{
-			System.out.println(charMap);
-			if(checkNum())
-			{
-				outputText.setText(convert());
-			}
+			in = new BaseXNumber(inputText.getText(), getInputBase());
 		}
 	}
 	

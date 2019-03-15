@@ -1,7 +1,9 @@
+import javax.swing.*;
+
 // Describes a number in any base
 public class BaseXNumber
 {
-	public static char[] charMap = new char[36];
+	public static char[] charMap = new char[26];
 	
 	private int base;
 	private char[] num;
@@ -12,13 +14,13 @@ public class BaseXNumber
 		if(charMap[0] == 0)
 			fillCharMap();
 		if(!checkNum(n))
-		{
-			// TODO: do things here
-		}
+			JOptionPane.showMessageDialog(null, String.format("Input number is incorrect. It must range from %s", range(base)));
+		else
+			num = n.toCharArray();
 	}
 	
 	// Check if the number in the input text box is correctly formatted
-	private boolean checkNum(char[] n)
+	public boolean checkNum(char[] n)
 	{
 		for(char c : n)
 		{
@@ -27,19 +29,32 @@ public class BaseXNumber
 		}
 		return true;
 	}
-	private boolean checkNum(String n)
+	public boolean checkNum(String n) { return checkNum(n.toCharArray()); }
+	
+	public String range(int b)
 	{
-		return checkNum(n.toCharArray());
+		if(b < 10)
+			return "0-" + (b-1);
+		else if(b == 10)
+			return "0-9,A";
+		else
+			return "0-9,A-" + map(b-1);
 	}
 	
 	private int reverseMap(char c)
 	{
-		// TODO: do the mapping thing
+		if(c >= '0' && c <= '9')
+			return (c - '0');
+		else
+			return c-'A' + 10;
 	}
 	
 	private char map(int n)
 	{
-		// TODO: also do the mapping thing
+		if(n < 10)
+			return (char)(n+'0');
+		else
+			return charMap[n-10];
 	}
 	
 	// Fill the charMap array with the alphabet
