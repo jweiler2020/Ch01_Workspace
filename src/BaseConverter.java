@@ -3,7 +3,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 public class BaseConverter extends JFrame
-	implements ActionListener
+	implements ActionListener, KeyListener
 {
 	private JTextField inputText, outputText;
 	private JComboBox<String> inputBases, outputBases;
@@ -11,7 +11,7 @@ public class BaseConverter extends JFrame
 	
 	private String[] bases = new String[35];
 	
-	private BaseXNumber in, out;
+	private BaseXNumber in = new BaseXNumber("", 10);
 	
 	public BaseConverter()
 	{
@@ -32,8 +32,11 @@ public class BaseConverter extends JFrame
 		
 		JLabel inputLabel = new JLabel("Input number");
 		inputText = new JTextField();
+		inputText.addKeyListener(this);
 		
 		inputBases = new JComboBox<>(bases);
+		inputBases.setSelectedIndex(8); // Base 10
+		inputBases.addActionListener(this);
 		
 		c.gridx = 0;
 		c.gridy = 0;
@@ -58,6 +61,8 @@ public class BaseConverter extends JFrame
 		outputText.setEditable(false);
 		
 		outputBases = new JComboBox<>(bases);
+		outputBases.setSelectedIndex(0); // Base 2
+		outputBases.addActionListener(this);
 		
 		c.gridx = 0;
 		c.gridy = 0;
@@ -112,13 +117,85 @@ public class BaseConverter extends JFrame
 	private int getOutputBase() { return outputBases.getSelectedIndex()+2; }
 	
 	
-	public void actionPerformed(ActionEvent e)
+	private String formatBin(String n)
 	{
-		if(e.getSource() == convertButton)
+		if(n.length()%4 != 0)
 		{
-			in = new BaseXNumber(inputText.getText(), getInputBase());
+			// Append as many zeroes as needed
+			StringBuilder sb = new StringBuilder();
+			int zeroes = 4 - n.length() % 4;
+			for (int i = 0; i < zeroes; i++)
+			{
+				sb.append("0");
+			}
+			n = sb + n;
+		}
+		// Fancy expression to add a space every 4 digits on the new string (sb + n)
+		return String.join(" ", n.split("(?<=\\G.{4})"));
+	}
+	
+	private String formatHex(String n)
+	{
+		if(n.length()%2 != 0)
+		{
+			// Append as many zeroes as needed
+			StringBuilder sb = new StringBuilder();
+			int zeroes = 2 - n.length() % 2;
+			for (int i = 0; i < zeroes; i++)
+			{
+				sb.append("0");
+			}
+			n = sb + n;
+		}
+		// Fancy expression to add a space every 4 digits on the new string (sb + n)
+		return String.join(" ", n.split("(?<=\\G.{2})"));
+	}
+	
+	
+	private void doConvert()
+	{
+		// Regex gets rid of all completely invalid character
+		if(in.setNum(inputText.getText().toUpperCase().replaceAll("[^0-9A-Z]", "")))
+		{
+			String out;
+			switch(getOutputBase())
+			{
+				case 2:
+					out = formatBin(in.convert(2));
+					break;
+				case 16:
+					out = formatHex(in.convert(16));
+					break;
+				default:
+					out = in.convert(getOutputBase());
+					break;
+			}
+			outputText.setText(out);
 		}
 	}
+	
+	public void actionPerformed(ActionEvent e)
+	{
+		if(e.getSource() == inputBases)
+		{
+			in.setBase(getInputBase());
+		}
+		else if(e.getSource() == convertButton)
+		{
+			doConvert();
+		}
+	}
+	
+	public void keyTyped(KeyEvent e)
+	{
+		if(e.getKeyChar() == '\n')
+		{
+			doConvert();
+		}
+	}
+	
+	public void keyPressed(KeyEvent e){}
+	public void keyReleased(KeyEvent e){}
 	
 	public static void main(String[] args)
 	{
